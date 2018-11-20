@@ -1,6 +1,6 @@
 # Mini_Proj_3
 ## About the Project 
-This is the third mini project. The goal of this project was to expand on mini project 1 and add two differnt databases to it. This project adds MongoDB and MySQL throug additional API calls. 
+This is the third mini project. The goal of this project was to expand on mini project 1 and add two different databases to it. This project adds MongoDB and MySQL throug additional API calls. 
 
 # How To Run
 1) cd into the directory you downloaded the files to. 
@@ -14,7 +14,7 @@ It will atempt to analyze the video. If it does a file video_descriptions.txt wi
 If it cannot process the video it will try and annotate each image. Those results will be in image_descriptions.txt, also in the ./img/<twitter_handle> directory.
 
 # Setup
-##For the Mini-Project 1 portion:
+## For the Mini-Project 1 portion:
 ### Python 3
 You need to run the program with Python 3. My OS is MAC OS 10.13.6, and it natively has Python 2.8 installed. I installed Python 3 separately (see: https://www.python.org/downloads/).
 
@@ -36,9 +36,9 @@ Once you have the keys you can replace empty place holders in "twitter_globals_s
 
 You will need a Google Developer account. You need to enable The Cloud Vision API and the Video Intelligence API. You need to set up billing for this to work. Download the JSON credentials. 
 
-##For the Mini-Project 3 portion:
-###Install MySQL locally
+## For the Mini-Project 3 portion:
+### Install MySQL locally
 1) For Mac OS install MySQL using this guide: https://dev.mysql.com/doc/refman/5.7/en/osx-installation-pkg.html 
-###Set up the database and tables
+### Set up the database and tables
 1) Update the username and passwords in the files <ADD FILENAME> with the password and username you used when installing MySQL
 2) Run the provided MySQL_setup.py file. This script will create the required databases and tables needed by the project
