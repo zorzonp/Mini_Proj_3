@@ -36,3 +36,9 @@ Once you have the keys you can replace empty place holders in "twitter_globals_s
 
 You will need a Google Developer account. You need to enable The Cloud Vision API and the Video Intelligence API. You need to set up billing for this to work. Download the JSON credentials. 
 
+##For the Mini-Project 3 portion:
+###Install MySQL locally
+1) For Mac OS install MySQL using this guide: https://dev.mysql.com/doc/refman/5.7/en/osx-installation-pkg.html 
+###Set up the database and tables
+1) Update the username and passwords in the files <ADD FILENAME> with the password and username you used when installing MySQL
+2) Run the provided MySQL_setup.py file. This script will create the required databases and tables needed by the project
