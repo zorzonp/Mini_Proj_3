@@ -69,8 +69,9 @@ def authenticate():
 			clientApi.verify_credentials()
 			return clientApi
 		
-		except tweepy.TweepError:
+		except tweepy.TweepError as e:
 			print ("Unable to authenticate with Twitter.\n Program is terminating.\n\n")
+			print ("Error: ", e)
 			exit(1)
 
 
@@ -153,9 +154,53 @@ def getTweets(api, userName):
 
 	#get all the user tweets
 	tweets = []
+	num_tweets_asked = 0
+	tweets_num = 0
+
+	#Ask the user how many tweets they want
+	while True:
+		num_tweets_asked = input("How many tweets whould you like to retrieve?\nEnter a number, all for all tweets, or exit to quit.\nKeep in mind number of tweets is not number of images.\n")
+		if num_tweets_asked != 'exit':
+			if num_tweets_asked == 'all':
+				
+				answer = input("Getting all tweets could take a long time. Are you sure? [y,n]")
+				while answer != 'y' or answer != 'n':
+					
+					if answer == 'y':
+						break
+					elif answer == 'n':
+						break
+					else:
+						answer = input("Getting all tweets could take a long time. Are you sure? [y,n]")
+
+
+				if answer == 'y':
+					break
+
+			else:
+				try:
+					tweets_num = int(num_tweets_asked)
+					break
+				except:
+					print("Not a valid input.")
+
+		else:
+			exit()
+
+    #get the tweets for the user
 	print("Fetching Tweets...")
-	for page in tweepy.Cursor(api.user_timeline, screen_name=userName).pages():
-		tweets = tweets + page
+
+	#get all tweets
+	if num_tweets_asked == 'all':
+		for page in tweepy.Cursor(api.user_timeline, screen_name=userName).pages():
+			tweets = tweets + page
+
+	#get tweets until we get the number requested 
+	else:
+		for page in tweepy.Cursor(api.user_timeline, screen_name=userName).pages():
+			tweets = tweets + page
+			if len(tweets) >= tweets_num:
+				break
 
 	print("Found: " + str(len(tweets)) + " Tweets")
 	return tweets

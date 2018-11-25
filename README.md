@@ -1,6 +1,6 @@
 # Mini_Proj_3
 ## About the Project 
-This is the third mini project. The goal of this project was to expand on mini project 1 and add two different databases to it. This project adds MongoDB and MySQL throug additional API calls. 
+This is the third mini project. The goal of this project was to expand on mini project 1 and add two different databases to it. This project adds MongoDB and MySQL through additional API calls. 
 
 # How To Run
 1) cd into the directory you downloaded the files to. 
@@ -40,5 +40,13 @@ You will need a Google Developer account. You need to enable The Cloud Vision AP
 ### Install MySQL locally
 1) For Mac OS install MySQL using this guide: https://dev.mysql.com/doc/refman/5.7/en/osx-installation-pkg.html 
 ### Set up the database and tables
-1) Update the username and passwords in the files <ADD FILENAME> with the password and username you used when installing MySQL
+1) Update the username and passwords in the file "sqlConnectInfo.py" with the password and username you used when installing MySQL. Update the HOST in the file MySQL_Helper.py and MySQL_setup.py if you are not using localhost for your MySQL instance.
 2) Run the provided MySQL_setup.py file. This script will create the required databases and tables needed by the project
+### Install Mongo DB Locally
+I am running on Mac OS. The following steps are the ones I used to install it on my computer.
+
+https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/#install-mongodb-community-edition
+
+You must run Mongo DB locally before you can use the API. Once it is installed you can runn the command "mongod".
+
+

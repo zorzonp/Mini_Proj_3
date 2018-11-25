@@ -17,6 +17,7 @@ import os
 from google.cloud import vision
 from google.cloud.vision import types
 from google.cloud import videointelligence
+import MySQL_Helper
 
 ####################################################################
 ##
@@ -171,6 +172,19 @@ def annotateImages(path):
 	print("Doing annotations on images in "+ path + ".........")
 	googleImageClient = vision.ImageAnnotatorClient()
 
+	#get the user from the path, needed for some of the SQL stuff
+	pathElements = path.split('/')
+	user = pathElements[len(pathElements)-2]
+
+
+	#set up the required SQL stuff to add and query
+	try:
+		connection = MySQL_Helper.connectToInstance()
+		connection = MySQL_Helper.createDB(connection, 'demo')
+		MySQL_Helper.createTableLabel(connection)
+	except Exception as e:
+		print("Error in annotateImages: ", e)
+
 	#sets up an output file
 	imageDescFile = open(path+"image_descriptions.txt", "w")
 
@@ -200,6 +214,22 @@ def annotateImages(path):
 				imageDescFile.write("\t\t"+label.description+": ")
 				confidence = label.score * 100.0
 				imageDescFile.write(str(round(confidence,2))+"%\n")
+
+				#Check if the label exists
+				exists = MySQL_Helper.checkLabelExists(connection, label.description)
+
+				#if it exists add to its occurance counter
+				if exists:
+					MySQL_Helper.updateNumOccurrences(connection, label.description)
+					#associate the user with this label
+					MySQL_Helper.addUserToLabel(connection, user, label.description)
+
+				#if it does not exist then create the first occurance
+				else:
+					MySQL_Helper.insertTableLabel(connection, label.description, 1)
+
+					#associate the user with this label
+					MySQL_Helper.addUserToLabel(connection, user, label.description)
 
 			imageDescFile.write("\n")
 	print("File: image_descriptions.txt has been written to " + path)
