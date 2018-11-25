@@ -1,17 +1,30 @@
 # Mini_Proj_3
 ## About the Project 
-This is the third mini project. The goal of this project was to expand on mini project 1 and add two different databases to it. This project adds MongoDB and MySQL through additional API calls. 
+This is the third mini project. The goal of this project was to expand on mini project 1 and add two different databases to it. This project adds MongoDB and MySQL through additional API calls. To view mini project 1 visit: https://github.com/zorzonp/BU_API_Project
+
+# New APIs
+## MySQL
+This API provides the functions to connect to a local instance of MySQL and create a database.
+This API also provides the functions to create the tables needed by the main project to store transactions and information about labels.
+
+
+## Mongo DB
+This API provides the functions to connect to a local instnce of MongoDB and to create a database and collections. 
+This API also provides functions to add transactions to the proper collection and label info to their collection.
 
 # How To Run
 1) cd into the directory you downloaded the files to. 
 2) Update the "twitter_globals_secret.py" file with your own credentials.
 3) Update the JSON path in Main.py to point to your Google API credentials.
-4) Run: "python Main.py" or "pyhton3 Main.py"
+4) Update the "sqlConnectInfo.py" file with the correct credentials you used when setting up your local MySQL instance.**
+5) Update the "HOST" variabe in "MySQL_Helper.py" if you are not using local host.**
+6) Run: "python 3.5 Main.py"
 
-The program will ask for a Twitter handle. It will fetch the images and store them in ./img/<twitter_handle>.
+** denote new steps related to the MySQL and MongoDB APIs
+
+The program will ask for a Twitter handle. It will fetch the images and store them in ./img/<twitter_handle>. It will record the transactions in the two databases. It will then annotate each image and add the results to the databases. Those results will also be in "image_descriptions.txt", also in the ./img/<twitter_handle> directory.
 Then it will concatenate then images into a video. 
-It will atempt to analyze the video. If it does a file video_descriptions.txt will be in the ./img/<twitter_handle> directory.
-If it cannot process the video it will try and annotate each image. Those results will be in image_descriptions.txt, also in the ./img/<twitter_handle> directory.
+
 
 # Setup
 ## For the Mini-Project 1 portion:
@@ -47,6 +60,8 @@ I am running on Mac OS. The following steps are the ones I used to install it on
 
 https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/#install-mongodb-community-edition
 
-You must run Mongo DB locally before you can use the API. Once it is installed you can runn the command "mongod".
+You must run Mongo DB locally before you can use the API. Once it is installed you can run the command "mongod" to start Mongo DB.
+
+Once it is running you can use the command "mongo" to open up the Mongo DB Shell.
 
 
