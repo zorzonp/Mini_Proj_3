@@ -29,7 +29,7 @@ Then it will concatenate then images into a video.
 # Setup
 ## For the Mini-Project 1 portion:
 ### Python 3
-You need to run the program with Python 3. My OS is MAC OS 10.13.6, and it natively has Python 2.8 installed. I installed Python 3 separately (see: https://www.python.org/downloads/).
+You need to run the program with Python 3.5. My OS is MAC OS 10.13.6, and it natively has Python 2.8 installed. I installed Python 3.5 separately (see: https://www.python.org/downloads/).
 
 Once that is installed you need to install the APIs 
 ### Tweepy
@@ -53,8 +53,8 @@ You will need a Google Developer account. You need to enable The Cloud Vision AP
 ### Install MySQL locally
 1) For Mac OS install MySQL using this guide: https://dev.mysql.com/doc/refman/5.7/en/osx-installation-pkg.html 
 ### Set up the database and tables
-1) Update the username and passwords in the file "sqlConnectInfo.py" with the password and username you used when installing MySQL. Update the HOST in the file MySQL_Helper.py and MySQL_setup.py if you are not using localhost for your MySQL instance.
-2) Run the provided MySQL_setup.py file. This script will create the required databases and tables needed by the project
+1) Update the username and passwords in the file "sqlConnectInfo.py" with the password and username you used when installing MySQL. Update the HOST in the file MySQL_Helper.py if you are not using localhost for your MySQL instance.
+
 ### Install Mongo DB Locally
 I am running on Mac OS. The following steps are the ones I used to install it on my computer.
 
