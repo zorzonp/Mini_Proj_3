@@ -52,3 +52,71 @@ def dropCollection(db, collectionName):
 		print ("dropCollection Error: ", e)
 		exit()
 
+#Tries and creates or connects to the labels collection in the MongoDB. The MongoDB database object is passed in
+def connectToLabels(db):
+	try:
+		labels = db['labels']
+		return labels
+	except Exception as e:
+		print ("Warning!! Could not create or connect to labels collection. No Label data will be stored from this transaction.")
+		print ("Error: ", e)
+
+#Checks if the label already exists. Must pass in the labels collection as a collection object and the label name as a string.
+#returns ture if it exists in the collection, false if not. 
+def checkLabelExists(labels, labelName):
+	try:
+		results = labels.find({'label':labelName})
+		if (results.count() > 0):
+			return True
+		else:
+			return False
+
+	except Exception as e:
+		print ("checkLabelExists Error: ", e)
+
+#Inserts the info for a label. Lables must be the collection object, labelName is a string and numOccurrences is an integer
+def insertLabel(labels, labelName, numOccurrences):
+	try:
+		data = {'label': labelName, 'numberOccurrences': numOccurrences}
+		results = labels.insert_one(data)
+	except Exception as e:
+		print ("insertLabel Error: ", e)
+
+#if the label already exists then update the number of occurances. labels is the collection object and labelName is a string
+def updateNumOccurrences(labels, labelName):
+	try:
+		results = labels.find({'label':labelName})
+		if (results.count() > 0):
+			firstResult = results[0]
+			numOccurrences = firstResult['numberOccurrences']
+			numOccurrences = numOccurrences + 1
+
+			results = labels.update({'label':labelName}, {'$set':{'numberOccurrences':numOccurrences}})
+	except Exception as e:
+		print ("updateNumOccurrences Error: ", e)
+
+def addUserToLabel(labels, labelName, userName):
+	try:
+		results = labels.find({'label':labelName})
+		if (results.count() > 0):
+			firstResult = results[0]
+			numFields = len(firstResult)
+			#3 fields would indicate id, label, and numOccurance
+			if numFields < 4:
+				users = [userName]
+				results = labels.update({'label':labelName}, {'$set':{'users':users}})
+			
+			else:#4 fields indicate the presence of a users field
+				
+				#check the presence of all the users to make sure not duplicate
+				users = firstResult['users']
+
+				#if the user is not already associated with this label then add them to the list of associated users
+				if not userName in users:
+					users.append(userName)
+					results = labels.update({'label':labelName}, {'$set':{'users':users}})
+					
+	except Exception as e:
+		print ("addUserToLabel Error: ", e)
+
+
