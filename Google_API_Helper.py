@@ -18,6 +18,7 @@ from google.cloud import vision
 from google.cloud.vision import types
 from google.cloud import videointelligence
 import MySQL_Helper
+import Mongo_Helper
 
 ####################################################################
 ##
@@ -185,6 +186,13 @@ def annotateImages(path):
 	except Exception as e:
 		print("Error in annotateImages: ", e)
 
+	try:
+		mongoClient = Mongo_Helper.setupClient()
+		MongoDb = Mongo_Helper.connectToDB(mongoClient)
+		MongoLabels = Mongo_Helper.connectToLabels(MongoDb)
+	except Exception as e:
+		print("Error in Mongo DB annotateImages: ", e)
+
 	#sets up an output file
 	imageDescFile = open(path+"image_descriptions.txt", "w")
 
@@ -215,21 +223,42 @@ def annotateImages(path):
 				confidence = label.score * 100.0
 				imageDescFile.write(str(round(confidence,2))+"%\n")
 
-				#Check if the label exists
-				exists = MySQL_Helper.checkLabelExists(connection, label.description)
+				#try and and add the labels to the MySQL DB
+				try:
+					#Check if the label exists
+					exists = MySQL_Helper.checkLabelExists(connection, label.description)
 
-				#if it exists add to its occurance counter
-				if exists:
-					MySQL_Helper.updateNumOccurrences(connection, label.description)
-					#associate the user with this label
-					MySQL_Helper.addUserToLabel(connection, user, label.description)
+					#if it exists add to its occurance counter
+					if exists:
+						MySQL_Helper.updateNumOccurrences(connection, label.description)
+						#associate the user with this label
+						MySQL_Helper.addUserToLabel(connection, user, label.description)
 
-				#if it does not exist then create the first occurance
-				else:
-					MySQL_Helper.insertTableLabel(connection, label.description, 1)
+					#if it does not exist then create the first occurance
+					else:
+						MySQL_Helper.insertTableLabel(connection, label.description, 1)
 
-					#associate the user with this label
-					MySQL_Helper.addUserToLabel(connection, user, label.description)
+						#associate the user with this label
+						MySQL_Helper.addUserToLabel(connection, user, label.description)
+				except Exception as e:
+					pass
+
+				#try and add the info to the MongoDB
+				try:
+					#Check if the label already exists
+					mongoExists = Mongo_Helper.checkLabelExists(MongoLabels, label.description)
+					
+					#If the label exists
+					if mongoExists:
+						#update the number of occurrences for the label and add associate the user with the label
+						Mongo_Helper.updateNumOccurrences(MongoLabels, label.description)
+						Mongo_Helper.addUserToLabel(MongoLabels, label.description, user)
+					else:
+						#The label did not exist so add the label to the labels collection and associate the user
+						Mongo_Helper.insertLabel(MongoLabels, label.description, 1)
+						Mongo_Helper.addUserToLabel(MongoLabels, label.description, user)
+				except Exception as e:
+					pass
 
 			imageDescFile.write("\n")
 	print("File: image_descriptions.txt has been written to " + path)
