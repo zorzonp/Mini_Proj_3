@@ -95,6 +95,7 @@ def updateNumOccurrences(labels, labelName):
 	except Exception as e:
 		print ("updateNumOccurrences Error: ", e)
 
+#associates a username with a label. LableName and userName are strings. Labels is a collection object. 
 def addUserToLabel(labels, labelName, userName):
 	try:
 		results = labels.find({'label':labelName})
