@@ -46,7 +46,7 @@ def main():
 
 	try:
 		connection = MySQL_Helper.connectToInstance()
-		connection = MySQL_Helper.createDB(connection, 'demo');
+		connection = MySQL_Helper.createDB(connection, 'demo')
 		MySQL_Helper.createTableTransactions(connection)
 	except Exception as e:
 		print("Error: ", e)
@@ -69,13 +69,17 @@ def main():
 	#get all their tweets
 	tweets = Twitter_API_Helper.getTweets(twitterClient, user)
 
-	#record the transaction in MySQL
+	
 	now = time.strftime('%Y-%m-%d %H:%M:%S')
-	MySQL_Helper.insertTransaction(connection, now, user, len(tweets))
 	Mongo_Helper.insertTransaction(transactions, now, user, len(tweets))
 
 	#filter tweets for images and download the images to path
-	path = Twitter_API_Helper.filterTweetsForImages(twitterClient, tweets, user)
+	result = Twitter_API_Helper.filterTweetsForImages(twitterClient, tweets, user)
+	path = result["path"]
+
+	#record the transaction in MySQL
+	now = time.strftime('%Y-%m-%d %H:%M:%S')
+	MySQL_Helper.insertTransaction(connection, now, user, len(tweets), result["numImages"])
 	
 	#reform all images in path to be the same size
 	#FFMPEG_API_Helper.reformatImages(path)

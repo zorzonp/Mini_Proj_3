@@ -8,6 +8,6 @@
 ##
 ####################################################################
 
-USERNAME = "PLACEHOLDER"
-PASSWORD = "PLACEHOLDER"
+USERNAME = "root"
+PASSWORD = "39914180"
 
