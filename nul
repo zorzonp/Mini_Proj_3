@@ -1,6 +1,6 @@
-PING google.com (172.217.12.206): 56 data bytes
-64 bytes from 172.217.12.206: icmp_seq=0 ttl=53 time=22.958 ms
+PING twitter.com (104.244.42.65): 56 data bytes
+64 bytes from 104.244.42.65: icmp_seq=0 ttl=51 time=210.878 ms
 
---- google.com ping statistics ---
+--- twitter.com ping statistics ---
 1 packets transmitted, 1 packets received, 0.0% packet loss
-round-trip min/avg/max/stddev = 22.958/22.958/22.958/0.000 ms
+round-trip min/avg/max/stddev = 210.878/210.878/210.878/0.000 ms

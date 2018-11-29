@@ -69,44 +69,38 @@ def main():
 	#get all their tweets
 	tweets = Twitter_API_Helper.getTweets(twitterClient, user)
 	
+	if len(tweets)>0:
+		#filter tweets for images and download the images to path
+		result = Twitter_API_Helper.filterTweetsForImages(twitterClient, tweets, user)
+		path = result["path"]
 
-	#filter tweets for images and download the images to path
-	result = Twitter_API_Helper.filterTweetsForImages(twitterClient, tweets, user)
-	path = result["path"]
-
-	#record the transaction in MySQL
-	now = time.strftime('%Y-%m-%d %H:%M:%S')
-	MySQL_Helper.insertTransaction(connection, now, user, len(tweets), result["numImages"])
-	Mongo_Helper.insertTransaction(transactions, now, user, len(tweets),result["numImages"])
+		#record the transaction in MySQL
+		now = time.strftime('%Y-%m-%d %H:%M:%S')
+		MySQL_Helper.insertTransaction(connection, now, user, len(tweets), result["numImages"])
+		Mongo_Helper.insertTransaction(transactions, now, user, len(tweets),result["numImages"])
 	
-	#reform all images in path to be the same size
-	#FFMPEG_API_Helper.reformatImages(path)
-
-	#make the images into a video, if falue status will be 1
 	
-	#status = FFMPEG_API_Helper.mergeImages(path)
-
-	# if status == 1:
-		# print ("FFMPEG could not make video. Annotateing images instead.")
 		#authenticate with Google
-	Google_API_Helper.authenticate(jsonPath)
-	try:
-		Google_API_Helper.annotateImages(path)
-	except:
-		print("Could not annotate images. Google may not have been able to authenticate your credentials")
+		Google_API_Helper.authenticate(jsonPath)
+		try:
+			Google_API_Helper.annotateImages(path)
+		except:
+			print("Could not annotate images. Google may not have been able to authenticate your credentials")
 	
-	#authenticate with Google
-	# Google_API_Helper.authenticate(jsonPath)
+	
+		#reform all images in path to be the same size
+		FFMPEG_API_Helper.reformatImages(path)
 
-	# try:
-	# 	#annotate video
-	# 	video = Google_API_Helper.openVideo(path)
-	# 	results = Google_API_Helper.annotate(video)
+		#make the images into a video, if falue status will be 1
+		status = FFMPEG_API_Helper.mergeImages(path)
 
-	# 	#print results
-	# 	Google_API_Helper.printResults(path, results)
-	# except:
-		print("Could not annotate video. Google may not have been able to authenticate your credentials")
+		if status == 1:
+			print ("FFMPEG could not make video. Annotateing images instead.")
+		else:
+			print("FFMPEG video created")
+	else:
+		print("No Tweets found")
+
 	
 	print("\nEnding API Project\n\n")
 
