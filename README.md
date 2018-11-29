@@ -7,18 +7,32 @@ This is the third mini project. The goal of this project was to expand on mini p
 This API provides the functions to connect to a local instance of MySQL and create a database.
 This API also provides the functions to create the tables needed by the main project to store transactions and information about labels.
 
+This API provides functions that provide analysis of the two tables. The following functions are provided:
+* history - gets a list of all the transactions on the system. 
+* transactionStats - gets overall statistics of the system. The average number of tweets in a feed, the average number of images in a feed, and the total number of transactions.
+* mostUsedLabel - gets the top three labels in the labels table. Returns them as a JSON object with the label name, occurrence count, and the users associated with the label.
+* lookUpLabel - takes in the name of a label. Looks the label up and returns the number of occurrences and the users associated with it. 
+
 
 ## Mongo DB
-This API provides the functions to connect to a local instnce of MongoDB and to create a database and collections. 
+This API provides the functions to connect to a local instance of MongoDB and to create a database and collections. 
 This API also provides functions to add transactions to the proper collection and label info to their collection.
+
+This API provides functions that provide analysis of the two collections. The following functions are provided:
+* history - gets a list of all the transactions on the system. 
+* transactionStats - gets overall statistics of the system. The average number of tweets in a feed, the average number of images in a feed, and the total number of transactions.
+* mostUsedLabel - gets the top three labels in the labels table. Returns them as a JSON object with the label name, occurrence count, and the users associated with the label.
+* lookUpLabel - takes in the name of a label. Looks the label up and returns the number of occurrences and the users associated with it. 
 
 # How To Run
 1) cd into the directory you downloaded the files to. 
 2) Update the "twitter_globals_secret.py" file with your own credentials.
 3) Update the JSON path in Main.py to point to your Google API credentials.
 4) Update the "sqlConnectInfo.py" file with the correct credentials you used when setting up your local MySQL instance.**
-5) Update the "HOST" variabe in "MySQL_Helper.py" if you are not using local host.**
+5) Update the "HOST" variable in "MySQL_Helper.py" if you are not using local host. **
 6) Run: "python 3.5 Main.py"
+
+7) Run "analysisTestDriver.py"* -> This is a test driver designed to test the analysis functions. It assumes the database and tables or collections are set up in advanced. Run the Main.py script a few times if you are not sure if everything is set up, that program sets up the required structures if they do not already exist. 
 
 ** denote new steps related to the MySQL and MongoDB APIs
 
