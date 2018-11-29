@@ -68,10 +68,7 @@ def main():
 
 	#get all their tweets
 	tweets = Twitter_API_Helper.getTweets(twitterClient, user)
-
 	
-	now = time.strftime('%Y-%m-%d %H:%M:%S')
-	Mongo_Helper.insertTransaction(transactions, now, user, len(tweets))
 
 	#filter tweets for images and download the images to path
 	result = Twitter_API_Helper.filterTweetsForImages(twitterClient, tweets, user)
@@ -80,6 +77,7 @@ def main():
 	#record the transaction in MySQL
 	now = time.strftime('%Y-%m-%d %H:%M:%S')
 	MySQL_Helper.insertTransaction(connection, now, user, len(tweets), result["numImages"])
+	Mongo_Helper.insertTransaction(transactions, now, user, len(tweets),result["numImages"])
 	
 	#reform all images in path to be the same size
 	#FFMPEG_API_Helper.reformatImages(path)

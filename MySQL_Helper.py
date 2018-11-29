@@ -275,7 +275,7 @@ def history(connection):
 		returnResult =[]
 
 		for result in myresults:
-			tmp = {"id":result[0] , "date":result[1], "user":result[2] ,"numTweets":result[3],"numImages":result[4] }
+			tmp = {"id":result[0] , "date":result[1].strftime("%Y-%m-%d %H:%M:%S"), "user":result[2] ,"numTweets":result[3],"numImages":result[4] }
 			returnResult.append(tmp)
 
 		return returnResult
