@@ -35,9 +35,9 @@ def connectToTransactions(db):
 #Inserts a transaction into the MongoDB transactions collection. This is run every time a user makes a request for Twitter images
 #the transactions collection is passed in as a MongoDB collections object, 
 #the date and the user are passed in as strings. The number of results is an integer.
-def insertTransaction(transactions, date, user, numResults):
+def insertTransaction(transactions, date, user, numResults, numImages):
 	try:
-		data = {'access_time': date, 'user_looked_up': user, 'num_tweets': numResults}
+		data = {'access_time': date, 'user_looked_up': user, 'num_tweets': numResults, 'num_images':numImages}
 		results = transactions.insert_one(data)
 	except Exception as e:
 		print ("insertTransaction Error: ", e)
@@ -95,6 +95,7 @@ def updateNumOccurrences(labels, labelName):
 	except Exception as e:
 		print ("updateNumOccurrences Error: ", e)
 
+#associates a username with a label. LableName and userName are strings. Labels is a collection object. 
 def addUserToLabel(labels, labelName, userName):
 	try:
 		results = labels.find({'label':labelName})
@@ -118,5 +119,100 @@ def addUserToLabel(labels, labelName, userName):
 					
 	except Exception as e:
 		print ("addUserToLabel Error: ", e)
+
+########################################################################################################################
+## The following functions are for analysis
+
+
+def lookupLabel(labels, labelName):
+	try:
+		results = labels.find({"label":labelName})
+		
+		if results != None:
+			returnResult = {"label":results[0]["label"],"numberOccurrences":results[0]["numberOccurrences"],"users":results[0]["users"]}
+			return returnResult
+		else:
+			print("Label "+labelName+" not found.")
+	except Exception as e:
+		print("Unable to look up label " + labelName)
+		print ("Mongo_Helper.lookupLabel error: ", e)
+
+def mostUsedLabel(labels):
+	try:
+		topHit = {"label":"","numberOccurrences": 0,"users":""}
+		secondHit = {"label":"","numberOccurrences":0,"users":""}
+		thirdHit = {"label":"","numberOccurrences":0,"users":""}
+
+		results = labels.find()
+
+		#only try and find the top results if something was returned
+		if results != None:
+			#loop over all the results
+			for result in results:
+				#replace the top result if the new result is more
+				if result["numberOccurrences"] > topHit["numberOccurrences"]:
+					thirdHit = secondHit
+					secondHit = topHit
+					topHit = result
+				#replace the second top result if the new result is more
+				elif result["numberOccurrences"] > secondHit["numberOccurrences"]:
+					thirdHit = secondHit
+					secondHit = result
+								
+				#replace the third top result if the new result is more
+				elif result["numberOccurrences"] > thirdHit["numberOccurrences"]:
+					thirdHit = result
+			returnResult = {"mostPopularLabel":topHit, "secondMostPopularLabel":secondHit, "thirdMostPopularLabel":thirdHit}
+			return returnResult
+		else:
+			print("There are no labels in the table.")
+
+	except Exception as e:
+		print ("Mongo_Helper.mostUsedLabel error: ", e)
+
+
+#return statistics about all the transactions 
+def transactionStats(transactions):
+	try:
+		results = transactions.find()
+		
+		sumTweets = 0
+		numResults = 0
+		sumImages = 0
+
+		for result in results:
+			sumTweets = sumTweets + result["num_tweets"]
+			sumImages = sumImages + result["num_images"]
+			numResults = numResults + 1
+
+		averageNumTweets = sumTweets/numResults
+		averageNumImages = sumImages/numResults
+
+		returnResult = {"averageNumTweets":averageNumTweets, "averageNumImages":averageNumImages, "numberOfEntries":numResults}
+
+		return returnResult
+
+	except Exception as e:
+		print ("Mongo_Helper.transactionStats Error: ", e)
+
+#returns a history of all the transactions in the transactions collection
+def history(transactions):
+	try:
+		results = transactions.find()
+		
+		returnResult =[]
+		#we must reformat the results so that all the fields are in the same order. 
+		#Mongo can sometimes store the same set of fields in different orders
+		for result in results:
+			tmp = {"date":result["access_time"],"user":result["user_looked_up"], "numTweets":result["num_tweets"], "numImages":result["num_images"]}
+			returnResult.append(tmp)
+
+		return returnResult
+			
+	except Exception as e:
+		print ("Mongo_Helper.history error: ", e)
+
+
+
 
 

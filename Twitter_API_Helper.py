@@ -1,7 +1,7 @@
 ####################################################################
 ##
 ##  Authors:		Peter Zorzonello
-##  Last Update:	9/15/2018
+##  Last Update:	11/27/2018
 ##  Class:			EC601 - A1
 ##  File_Name:		Twitter_API_Helper.py
 ##
@@ -222,6 +222,7 @@ def getTweets(api, userName):
 ##
 ## Outputs
 ##   path: the path to the images folder
+##   numImages: number of image tweets
 ##
 ## Exception Handling
 ##   Error messages are printed to the console
@@ -260,4 +261,4 @@ def filterTweetsForImages(api, tweets, userName):
 	print("\nDownloaded " + str(counter) + " tweets with images.")
 
 	path = path + "/"
-	return path
+	return {"path":path,"numImages":counter}

@@ -60,7 +60,7 @@ def createDB(connection, dbName):
 def createTableTransactions(connection):
 	try:
 		cur = connection.cursor()
-		cur.execute('CREATE TABLE IF NOT EXISTS transactions (id int(11) NOT NULL AUTO_INCREMENT, access_time datetime NOT NULL, user_looked_up varchar(50) NOT NULL, num_tweets int(11) NOT NULL, PRIMARY KEY (id));')
+		cur.execute('CREATE TABLE IF NOT EXISTS transactions (id int(11) NOT NULL AUTO_INCREMENT, access_time datetime NOT NULL, user_looked_up varchar(50) NOT NULL, num_tweets int(11) NOT NULL, num_images int(11), PRIMARY KEY (id));')
 		
 	except MySQLdb.Error as e:
 		if(e.args[0] == 1050):
@@ -75,10 +75,10 @@ def createTableTransactions(connection):
 		exit(1)
 
 #Inserts a transaction into the transactions table
-def insertTransaction(connection, date, user, num_results):
+def insertTransaction(connection, date, user, num_results, num_images):
 	try:
 		cur = connection.cursor()
-		cur.execute('INSERT INTO transactions (access_time, user_looked_up, num_tweets) VALUES(%s, %s, %s);', (date, user, num_results))
+		cur.execute('INSERT INTO transactions (access_time, user_looked_up, num_tweets, num_images) VALUES(%s, %s, %s, %s);', (date, user, num_results, num_images))
 		connection.commit()
 	except Exception as e:
 		connection.rollback()
@@ -184,3 +184,100 @@ def checkLabelExists(connection, labelName):
 		
 	except Exception as e:
 		print("checkLabelExists Error: ", e)
+
+
+
+########################################################################################################################
+## The following functions are for analysis
+
+#looks up a spicific label and return its statistics 
+def lookUpLabel(connection, labelName):
+	try:
+		cur = connection.cursor()
+		cur.execute("SELECT * FROM labels WHERE label = %s", [labelName])
+		myresult = cur.fetchone()
+		if myresult != None:
+			returnResult = {"label":myresult[0],"numberOccurrences":myresult[1],"users":myresult[2]}
+			return returnResult
+		else:
+			print("Label "+labelName+" not found.")
+	except Exception as e:
+		print("Unable to look up label " + labelName)
+		print("lookUpLabel error: ", e)
+
+#finds the most used labels and return them
+def mostUsedLabel(connection):
+	try:
+
+		topHit = ["",0,""]
+		secondHit = ["",0,""]
+		thirdHit = ["",0,""]
+
+		cur = connection.cursor()
+		cur.execute("SELECT * FROM labels")
+		myresults = cur.fetchall()
+		#only try and find the top results if something was returned
+		if myresults != None:
+			#loop over all the results
+			for result in myresults:
+				#replace the top result if the new result is more
+				if result[1] > topHit[1]:
+					thirdHit = secondHit
+					secondHit = topHit
+					topHit = result
+				#replace the second top result if the new result is more
+				elif result[1] > secondHit[1]:
+					thirdHit = secondHit
+					secondHit = result
+								
+				#replace the third top result if the new result is more
+				elif result[1] > thirdHit[1]:
+					thirdHit = result
+			returnResult = {"mostPopularLabel":topHit, "secondMostPopularLabel":secondHit, "thirdMostPopularLabel":thirdHit}
+			return returnResult
+		else:
+			print("There are no labels in the table.")
+	except Exception as e:
+		print("mostUsedLabel error: ", e)
+
+#return statistics about all the transactions 
+def transactionStats(connection):
+	try:
+		cur = connection.cursor()
+		cur.execute("SELECT * FROM transactions")
+		myresults = cur.fetchall()
+
+		sumTweets = 0
+		numResults = 0
+
+		sumImages = 0
+
+		for result in myresults:
+			sumTweets = sumTweets + result[3]
+			sumImages = sumImages + result[4]
+			numResults = numResults + 1
+
+		averageNumTweets = sumTweets/numResults
+		averageNumImages = sumImages/numResults
+
+		returnResult = {"averageNumTweets":averageNumTweets, "averageNumImages":averageNumImages, "numberOfEntries":numResults}
+
+		return returnResult
+	except Exception as e:
+		print("transactionStats error: ", e)
+
+#returns the entire history from transactions table
+def history(connection):
+	try:
+		cur = connection.cursor()
+		cur.execute("SELECT * FROM transactions")
+		myresults = cur.fetchall()
+		returnResult =[]
+
+		for result in myresults:
+			tmp = {"id":result[0] , "date":result[1].strftime("%Y-%m-%d %H:%M:%S"), "user":result[2] ,"numTweets":result[3],"numImages":result[4] }
+			returnResult.append(tmp)
+
+		return returnResult
+	except Exception as e:
+		print("history error: ", e)	

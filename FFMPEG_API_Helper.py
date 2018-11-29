@@ -43,7 +43,7 @@ def mergeImages(path):
 	#runs the ffmpeg
 	try:
 		#os.system("ffmpeg -pattern_type glob -framerate 30 -i '"+path+"*.jpg' "+path+"out_video.m4v")
-		ff = ffmpy.FFmpeg(inputs={""+path+"*.jpg": '-framerate 30 -pattern_type glob'}, outputs={""+path+"out.m4v": '-y'})
+		ff = ffmpy.FFmpeg(inputs={""+path+"*.jpg": '-framerate 1/5 -pattern_type glob'}, outputs={""+path+"out.m4v": '-y'})
 		ff.cmd
 		ff.run()
 		return 0
